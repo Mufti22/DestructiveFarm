@@ -27,12 +27,29 @@ function generateFlagTableRows(rows) {
             item.status,
             item.checksystem_response !== null ? item.checksystem_response : ''
         ];
-
-        html += '<tr>';
-        cells.forEach(function (text) {
-            html += '<td>' + escapeHtml(text) + '</td>';
-        });
-        html += '</tr>';
+        
+        if(item?.status === 'ACCEPTED') {
+            html += '<tr style="box-shadow: 0px 0px 10px 5px rgba(0,200,0,0.5);">';
+            cells.forEach(function (text) {
+                html += '<td style="font-weight:700;">' + escapeHtml(text) + '</td>';
+            });
+            html += '</tr>';
+        }
+        else if(item?.status === 'QUEUED') {
+            html += '<tr style="box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.5);">';
+            cells.forEach(function (text) {
+            html += '<td style="font-weight:700;">' + escapeHtml(text) + '</td>';
+            });
+            html += '</tr>';
+        }
+        else {
+            html += '<tr style="box-shadow: 0px 0px 10px 5px rgba(200,0,0,0.5)">';
+            cells.forEach(function (text) {
+            html += '<td style="font-weight:700;">' + escapeHtml(text) + '</td>';
+            });
+            html += '</tr>';
+        }
+        
     });
     return html;
 }

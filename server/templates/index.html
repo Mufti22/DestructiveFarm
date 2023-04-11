@@ -17,7 +17,7 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-0">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-0" style="width:100vw;">
             <img class="logo" src="/static/img/qbt.png" />
             <div class="navbar-brand">QBT Farm</div>
         </nav>
@@ -25,7 +25,7 @@
         <div class="container mt-4">
             <div class="row mb-4">
                 <div class="col-lg-8">
-                    <div class="card border-light">
+                    <div class="card border-dark">
                         <div class="card-body">
                             <h4 class="card-title">Show Flags</h4>
                             <form id="show-flags-form">
@@ -157,7 +157,7 @@
                 </div>
 
                 <div class="col-lg-4">
-                    <div class="card border-light">
+                    <div class="card border-dark">
                         <div class="card-body">
                             <h4 class="card-title">Add Flags Manually</h4>
                             <form id="post-flags-manual-form">
@@ -187,11 +187,11 @@
             <div class="mb-3 text-center query-status"></div>
 
             <div class="search-results" style="display: none">
-                <p>Found <span class="total-count"></span> flags</p>
+                <p style="font-weight: 700;">Found <span class="total-count"></span> flags</p>
 
                 <ul class="pagination pagination-sm"></ul>
 
-                <table class="table table-hover">
+                <table class="table table-hover border-dark" style="margin: 0 auto;">
                     <thead>
                         <tr class="table-secondary">
                             <th scope="col">Sploit</th>
@@ -199,7 +199,7 @@
                             <th scope="col">Flag</th>
                             <th scope="col">Time</th>
                             <th scope="col">Status</th>
-                            <th scope="col">Checksystem Response</th>
+                            <th scope="col">Response</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
