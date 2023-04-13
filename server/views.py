@@ -38,7 +38,6 @@ FLAGS_PER_PAGE = 30
 
 
 @app.route('/ui/get_info', methods=['GET'])
-@auth.auth_required
 def get_info():
     query_1 = 'SELECT Time from flags ORDER BY flags.Time'
     sql_time_info = database.query(query_1)

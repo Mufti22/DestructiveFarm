@@ -165,9 +165,11 @@ function postFlagsManual() {
 
 function showGraphic() {
     $('.btn-show-graph').attr('disabled',true)
-       
+   
     $.get('/ui/get_info')
         .done(function(response) {
+            split_time = [];
+            time = [];
             time = response.time;
             for(let t in time) split_time.push(time[t].split(' ')[1])
         
@@ -178,10 +180,10 @@ function showGraphic() {
     chart = new Chart(ctx,{
             type: 'line',
             data: {
-                labels: [...split_time],
+                labels: split_time,
                 datasets: [{
                     label: 'Count Accepted flags',
-                    data: [...flags],
+                    data: flags,
                     backgroundColor: 'rgba(0,250,0,0.2)',
                     borderColor: 'rgba(0,200,0,1)',
                     borderWidth: 3,
