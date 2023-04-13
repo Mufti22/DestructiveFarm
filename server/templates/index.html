@@ -143,6 +143,7 @@
                                         >
                                             Show
                                         </button>
+                                        
                                     </div>
                                 </div>
                                 <input
@@ -152,6 +153,9 @@
                                     name="page-number"
                                 />
                             </form>
+                            <button style="margin-top: 10px;" class="btn btn-badge-danger btn-sm btn-show-graph">
+                                Show graph
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -186,8 +190,10 @@
 
             <div class="mb-3 text-center query-status"></div>
 
-            <div class="search-results" style="display: none">
-                <p style="font-weight: 700;">Found <span class="total-count"></span> flags</p>
+            <div class="search-results" style="display: none;">
+                <p style="font-weight: 700;display:inline-block;">Found <span class="total-count"></span> flags</p>
+                <p style="font-weight: 700;display: inline-block;margin-left: 50px;">Accepted <span class="total-accepted-count"></span> flags</p>
+                <p style="font-weight: 700;display: inline-block;margin-left: 50px;">Skipped/Queued <span class="total-skipped-count"></span> flags</p>
 
                 <ul class="pagination pagination-sm"></ul>
 
@@ -205,10 +211,16 @@
                     <tbody></tbody>
                 </table>
 
-                <ul class="pagination pagination-sm"></ul>
+               <!-- <ul class="pagination pagination-sm"></ul> -->
             </div>
+            
+            <canvas id="container-graph-canvas">
+            </canvas>    
         </div>
+        
 
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="/static/js/jquery.min.js"></script>
         <script src="/static/js/ui.js"></script>
     </body>

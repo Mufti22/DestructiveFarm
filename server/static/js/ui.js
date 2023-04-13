@@ -1,3 +1,12 @@
+var chart = null;
+var flags = [];
+var time = [];
+var split_time = [];
+var hours;
+var minutes;
+var seconds;
+var arr = [];
+
 function padLeft(s, length) {
     s = s.toString();
     while (s.length < length)
@@ -29,21 +38,21 @@ function generateFlagTableRows(rows) {
         ];
         
         if(item?.status === 'ACCEPTED') {
-            html += '<tr style="box-shadow: 0px 0px 10px 5px rgba(0,200,0,0.5);">';
+            html += '<tr style="box-shadow:inset 0px 0px 5px 5px rgba(0,200,0,0.5);">';
             cells.forEach(function (text) {
                 html += '<td style="font-weight:700;">' + escapeHtml(text) + '</td>';
             });
             html += '</tr>';
         }
         else if(item?.status === 'QUEUED') {
-            html += '<tr style="box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.5);">';
+            html += '<tr style="box-shadow:inset 0px 0px 5px 5px rgba(0,0,0,0.5);">';
             cells.forEach(function (text) {
             html += '<td style="font-weight:700;">' + escapeHtml(text) + '</td>';
             });
             html += '</tr>';
         }
         else {
-            html += '<tr style="box-shadow: 0px 0px 10px 5px rgba(200,0,0,0.5)">';
+            html += '<tr style="box-shadow:inset 0px 0px 5px 5px rgba(200,0,0,0.5);">';
             cells.forEach(function (text) {
             html += '<td style="font-weight:700;">' + escapeHtml(text) + '</td>';
             });
@@ -53,6 +62,7 @@ function generateFlagTableRows(rows) {
     });
     return html;
 }
+
 
 function generatePaginator(totalCount, rowsPerPage, pageNumber) {
     var totalPages = Math.ceil(totalCount / rowsPerPage);
@@ -77,13 +87,16 @@ function generatePaginator(totalCount, rowsPerPage, pageNumber) {
     return html;
 }
 
+
 function getPageNumber() {
     return parseInt($('#page-number').val());
 }
 
+
 function setPageNumber(number) {
     $('#page-number').val(number);
 }
+
 
 var queryInProgress = false;
 
@@ -91,7 +104,6 @@ function showFlags() {
     if (queryInProgress)
         return;
     queryInProgress = true;
-
     $('.search-results').hide();
     $('.query-status').html('Loading...').show();
 
@@ -100,6 +112,8 @@ function showFlags() {
             $('.search-results tbody').html(generateFlagTableRows(response.rows));
 
             $('.search-results .total-count').text(response.total_count);
+            $('.search-results .total-accepted-count').text(response.total_accepted_count);
+            $('.search-results .total-skipped-count').text(response.total_skipped_count);
             $('.search-results .pagination').html(generatePaginator(
                 response.total_count, response.rows_per_page, getPageNumber()));
             $('.search-results .page-link').click(function (event) {
@@ -118,7 +132,10 @@ function showFlags() {
         .always(function () {
             queryInProgress = false;
         });
+
+        
 }
+
 
 function postFlagsManual() {
     if (queryInProgress)
@@ -144,18 +161,65 @@ function postFlagsManual() {
         });
 }
 
-$(function () {
-    showFlags();
 
+
+function showGraphic() {
+    $('.btn-show-graph').attr('disabled',true)
+       
+    $.get('/ui/get_info')
+        .done(function(response) {
+            time = response.time;
+            for(let t in time) split_time.push(time[t].split(' ')[1])
+        
+            flags = response.flags;
+            var ctx = document.getElementById('container-graph-canvas').getContext('2d');
+            console.log(split_time);
+            console.log(flags);
+    chart = new Chart(ctx,{
+            type: 'line',
+            data: {
+                labels: [...split_time],
+                datasets: [{
+                    label: 'Count Accepted flags',
+                    data: [...flags],
+                    backgroundColor: 'rgba(0,250,0,0.2)',
+                    borderColor: 'rgba(0,200,0,1)',
+                    borderWidth: 3,
+                    tension: 0.5
+                }]
+            },
+            options: {
+                
+            }
+        }
+    );
+    chart.render();
+            
+    });
+}
+
+
+
+$(function () {
+
+    showFlags();
     $('#show-flags-form').submit(function (event) {
         event.preventDefault();
-
         setPageNumber(1);
         showFlags();
+        chart.destroy();
+        $('.btn-show-graph').attr('disabled',false)
     });
+
     $('#post-flags-manual-form').submit(function (event) {
         event.preventDefault();
-
         postFlagsManual();
+    });
+
+    $('.btn-show-graph').click(() => {
+        $('.search-results').css('display', 'none');
+        setTimeout(() => {
+            showGraphic();    
+        },250);
     });
 });

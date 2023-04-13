@@ -37,6 +37,35 @@ FORM_DATETIME_FORMAT = '%Y-%m-%d %H:%M'
 FLAGS_PER_PAGE = 30
 
 
+@app.route('/ui/get_info', methods=['GET'])
+@auth.auth_required
+def get_info():
+    query_1 = 'SELECT Time from flags ORDER BY flags.Time'
+    sql_time_info = database.query(query_1)
+    all_times = []
+    flags = []
+    for item in sql_time_info:
+        
+        dt = datetime.fromtimestamp(item[0])
+        t = dt.strftime('%Y-%m-%d %H:%M:%S')
+        all_times.append(t)
+        
+
+    uniq_times = list(set(all_times))
+    uniq_times.sort()
+    for item in uniq_times:
+        query_2 = 'SELECT COUNT(*) FROM flags where flags.status="ACCEPTED" and flags.Time="{}" ORDER BY flags.Time'.format(time.mktime(time.strptime(item, '%Y-%m-%d %H:%M:%S')))
+        count_flags_for_time = database.query(query_2)
+        
+        for i in count_flags_for_time:
+            flags.append(i[0])
+    
+    return jsonify({
+        'time': uniq_times,
+        'flags': flags
+    })
+
+
 @app.route('/ui/show_flags', methods=['POST'])
 @auth.auth_required
 def show_flags():
@@ -75,12 +104,21 @@ def show_flags():
     args = conditions_args
     total_count = database.query(sql, args)[0][0]
 
+    sql_accepted = 'SELECT COUNT(*) FROM flags where flags.status="ACCEPTED"'
+    total_accepted_count = database.query(sql_accepted)[0][0]
+    
+    sql_skipped = 'SELECT COUNT(*) FROM flags where flags.status="SKIPPED" OR flags.status="QUEUED"'
+    total_skipped_count = database.query(sql_skipped)[0][0]
+    
     return jsonify({
         'rows': [dict(item) for item in flags],
 
         'rows_per_page': FLAGS_PER_PAGE,
         'total_count': total_count,
+        'total_accepted_count': total_accepted_count,
+        'total_skipped_count': total_skipped_count
     })
+
 
 
 @app.route('/ui/post_flags_manual', methods=['POST'])
